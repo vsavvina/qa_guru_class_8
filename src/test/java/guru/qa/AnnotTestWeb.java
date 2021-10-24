@@ -1,7 +1,9 @@
 package guru.qa;
 
 import com.codeborne.selenide.Configuration;
+import guru.qa.base.MainPage;
 import guru.qa.domain.MenuItem;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,49 +16,47 @@ import java.util.stream.Stream;
 import static com.codeborne.selenide.Selenide.open;
 
 public class AnnotTestWeb {
-    String site = "https://github.com/selenide/selenide";
+    final private MainPage mainPage = new MainPage();
 
-    @CsvSource({
-            "88891",
-            "88892"
-    })
-    @DisplayName("Test with CsvSource")
-    @ParameterizedTest()
-    void testWithComplexName(int allureId, String searchQuery, String testName) {
+    @BeforeAll
+    static void beforeAll() {
         Configuration.startMaximized = true;
-        open(site);
-
-//        ymp.doSearch(searchQuery).checkResults(searchQuery);
+        open("https://www.lamoda.ru/");
     }
 
-    @EnumSource(value = MenuItem.class, names = {"SEARCH"}, mode = EnumSource.Mode.EXCLUDE)
+    @CsvSource({
+            "Premium",
+            "Спорт",
+            "Красота",
+    })
+    @DisplayName("Tests with CsvSource")
+    @ParameterizedTest()
+    void testWithComplexName(String searchQuery) {
+        mainPage.checkListTab(searchQuery);
+        System.out.println(searchQuery);
+    }
+
+    @EnumSource(value = MenuItem.class)
     @DisplayName("Test with EnumSource")
     @ParameterizedTest()
     void checkSearchResultForSeveralMenuItems(MenuItem menuItem) {
         Configuration.startMaximized = true;
-        open(site);
-        //ymp.doSearch("selenide").switchToMenuItem(menuItem);
-        System.out.println();
+        mainPage.checkListTab(menuItem.getDesc());
+        System.out.println(menuItem.getDesc());
     }
 
     static Stream<Arguments> testWithMethodSource() {
         return Stream.of(
-                Arguments.of(0, " Все потоки"),
-                Arguments.of(1, "Разработка"),
-                Arguments.of(2, "Администрирование"),
-                Arguments.of(3, "Дизайн"),
-                Arguments.of(4, "Менеджмент"),
-                Arguments.of(5, "Маркетинг"),
-                Arguments.of(6, "Научпоп")
+                Arguments.of(3, "Обувь"),
+                Arguments.of(4, "Аксессуары"),
+                Arguments.of(5, "Бренды")
         );
     }
-
     @MethodSource("testWithMethodSource")
     @ParameterizedTest()
     @DisplayName("Test with MethodSource")
-    void openTabsUsingMethodSource(int number, String tab){
-        //page.openMainPage()
-         //       .clickItemWithNumber(number)/
-        //            .checkTab(tab);
+    void openTabsUsingMethodSource(int num, String name){
+        mainPage.menuList(num).checkListTab(name);
+        System.out.println(name);
     }
 }

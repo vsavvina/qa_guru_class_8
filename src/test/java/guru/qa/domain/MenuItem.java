@@ -1,9 +1,9 @@
 package guru.qa.domain;
 
 public enum MenuItem {
-    SEARCH("Поиск"),
-    IMAGES("Картинки"),
-    VIDEO("Видео");
+    IDEA("Идеи"),
+    NOVELTY("Новинки"),
+    CLOTHES("Одежда");
 
     private String desc;
 
